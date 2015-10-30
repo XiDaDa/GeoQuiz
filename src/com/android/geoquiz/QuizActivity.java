@@ -96,6 +96,8 @@ public class QuizActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent it = new Intent(QuizActivity.this,CheatActivity.class);
+				boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
+				it.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTrue);
 				startActivity(it);
 			}
 		});
