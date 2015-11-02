@@ -21,8 +21,12 @@ public class QuizActivity extends Activity {
 	private TextView mQuestionTextView;
 	private int mCurrentIndex = 0;
 	private boolean mIsCheater;
+	private boolean mIsTureCheater;
+	private int[] mCheaterQuestionIndex;
 	private static final String TAG = "QuizActivity";
 	private static final String KEY_INDEX = "index";
+	private static final String KEY_CHEATER = "isCheater";
+
 	
 	private TrueFalse[] mQuestionBank = new TrueFalse[]{
 			new TrueFalse(R.string.question_oceans,true),
@@ -38,6 +42,7 @@ public class QuizActivity extends Activity {
 		setContentView(R.layout.activity_quiz);
 		if(savedInstanceState != null){
 			mCurrentIndex = savedInstanceState.getInt(KEY_INDEX,0);
+			mIsCheater = savedInstanceState.getBoolean(KEY_CHEATER,false);
 		}
 		mQuestionTextView = (TextView)findViewById(R.id.question_textview);
 		mQuestionTextView.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +105,7 @@ public class QuizActivity extends Activity {
 				Intent it = new Intent(QuizActivity.this,CheatActivity.class);
 				boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
 				it.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+				it.putExtra(CheatActivity.EXTRA_QUESTION_INDEX, mQuestionBank[mCurrentIndex].getQuestion());
 				startActivityForResult(it,0);
 			}
 		});
@@ -112,6 +118,7 @@ public class QuizActivity extends Activity {
 		super.onSaveInstanceState(savedInstanceState);
 		Log.d(TAG, "saveInstanceState");
 		savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+		savedInstanceState.putBoolean(KEY_CHEATER, mIsCheater);
 	}
 	
 	@Override
@@ -120,6 +127,7 @@ public class QuizActivity extends Activity {
 			return;
 		}
 		mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+		mCheaterQuestionIndex = data.getIntArrayExtra(CheatActivity.CHEATER_QUESTION_INDEX);
 	}
 	
 	@Override
@@ -149,7 +157,13 @@ public class QuizActivity extends Activity {
 	private void checkAnswer(boolean userPressedTrue){
 		boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
 		int messageId = 0;
-		if(mIsCheater){
+		for(int i=0;i<5;i++){
+			if(mCheaterQuestionIndex[i] == mQuestionBank[mCurrentIndex].getQuestion()){
+				mIsTureCheater = true;
+			}
+			
+		}
+		if(mIsCheater||mIsTureCheater){
 			messageId = R.string.judgment_toast;
 		}else{			
 			if (userPressedTrue == answerIsTrue){
