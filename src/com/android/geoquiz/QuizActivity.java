@@ -81,6 +81,7 @@ public class QuizActivity extends Activity {
 				if(mCurrentIndex>=1){					
 					mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
 					mIsCheater = false;
+					mIsTureCheater = false;
 					updateQuestion();
 				}
 			}
@@ -93,6 +94,7 @@ public class QuizActivity extends Activity {
 				// TODO Auto-generated method stub
 				mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
 				mIsCheater = false; 
+				mIsTureCheater = false;
 				updateQuestion();
 			}
 		});
@@ -160,8 +162,7 @@ public class QuizActivity extends Activity {
 		for(int i=0;i<5;i++){
 			if(mCheaterQuestionIndex[i] == mQuestionBank[mCurrentIndex].getQuestion()){
 				mIsTureCheater = true;
-			}
-			
+			}			
 		}
 		if(mIsCheater||mIsTureCheater){
 			messageId = R.string.judgment_toast;
